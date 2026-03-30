@@ -1,17 +1,19 @@
 from machine import Pin, I2C
 import ssd1306
 import time
-i2c = I2C(0, scl=Pin(22), sda=Pin(21))
-oled = ssd1306.SSD1306_I2C(128, 64, i2c)
-sensor = Pin(25, Pin.IN)
-smradina = 0
+
+i2c = I2C(0, scl=Pin(22), sda=Pin(21)) # init i2c
+oled = ssd1306.SSD1306_I2C(128, 64, i2c) # init oled
+sensor = Pin(25, Pin.IN) # init sensor 
+count = 0
+
 while True:
     val = sensor.value()
     print(val)
-    if val == 1:  
+    if val == 1:  # person/object detected
         smradina += 1
         oled.fill(0)
         oled.text("Person detected", 5, 5)
-        oled.text(f"number: {smradina}", 5, 20)
-        oled.show()
-        time.sleep_ms(500)
+        oled.text(f"number: {count}", 5, 20) 
+        oled.show() # update screen
+        time.sleep_ms(500) # no double detection
