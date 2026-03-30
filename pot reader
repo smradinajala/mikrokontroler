@@ -1,0 +1,47 @@
+from machine import Pin, SoftI2C, ADC
+import ssd1306
+import time
+
+
+i2c = SoftI2C(scl=Pin(22),sda=Pin(21)) # init i2c
+oled = ssd1306.SSD1306_I2C(128, 64, i2c) # init screen
+
+met = ADC(Pin(34)) # defining which pin the pot outpus goes to
+met.atten(ADC.ATTN_11DB)  # from 0 do 3.3v
+met.width(ADC.WIDTH_12BIT) # bits from 0 to 4095
+
+def map_value(x, in_min, in_max, out_min, out_max): # turning analog digital converter (bits) to numbers
+    return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
+
+def avg(ADC, samples = 5): # averaging 5 samples to get solid number
+    total = 0 # amount of samples
+    for i in range(samples):
+        total += ADC.read() # after reading add to the numbr of samples
+    return total // samples # calculate average
+    
+    
+oled.fill(0)
+oled.show()
+time.sleep_ms(100)
+
+count = 0
+
+while True:
+    data = met.read()
+    percent = map_value(data, 0, 4095, 0, 100) #turns bits into percentage for easier writing and reading
+    oled.fill(0)
+
+    if percent <= 33:
+        oled.text("test1",0 ,0) #showing different things based on pot position, percent
+        oled.show()
+
+    elif percent <= 66:
+        oled.text("test2", 0, 0)
+        oled.show()
+
+    else:
+        oled.text("test3", 0, 0)
+        oled.show
+
+    oled.show() # rendering
+    time.sleep_ms(100)
