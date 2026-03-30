@@ -1,0 +1,37 @@
+from machine import Pin, SoftI2C, ADC
+import ssd1306
+import time
+
+
+i2c = SoftI2C(scl=Pin(22),sda=Pin(21)) # init i2c
+oled = ssd1306.SSD1306_I2C(128, 64, i2c) # init screen
+sensor = ADC(Pin(34)) # define sensor 
+sensor.atten(ADC.ATTN_11DB) # define what voltage adc can measure
+
+def screen1(): 	#different screens to cycle through
+    oled.fill(0)
+    oled.text("screen1",0 ,0)
+    oled.show()
+def screen2():
+    oled.fill(0)
+    oled.text("screen2",0 ,0)
+    oled.show()
+def screen3():
+    oled.fill(0)
+    oled.text("screen3",0 ,0)
+    oled.show()
+
+screens = [screen1, screen2, screen3] # list of screen functions
+current = 0 # current poistion 
+screens[current]()
+threshold = 2000 
+
+while True: # main loop
+    val = sensor.read() # read sensor and put output into variable
+    if val > threshold:
+        current = (current + 1) % len(screens) # display goes back to 0 when it reaches max value
+        screens[current]()
+        time.sleep_ms(200)
+    time.sleep_ms(20)
+
+
