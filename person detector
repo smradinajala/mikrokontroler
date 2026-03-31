@@ -11,7 +11,7 @@ while True:
     val = sensor.value()
     print(val)
     if val == 1:  # person/object detected
-        smradina += 1
+        count += 1
         oled.fill(0)
         oled.text("Person detected", 5, 5)
         oled.text(f"number: {count}", 5, 20) 
